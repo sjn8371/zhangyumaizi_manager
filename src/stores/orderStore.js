@@ -5,29 +5,35 @@ export const useOrderStore = defineStore('orders', () => {
   // 订单数据
   const orders = ref([]);
   const mode = ref('buyer');
-  
-  // 商家设置
+
+  // 更新商家设置
   const settings = ref({
     sizes: [
       { id: 'small', name: '小份', basePrice: 10, count: 6 },
       { id: 'large', name: '大份', basePrice: 15, count: 10 }
     ],
+    // 更新口味：蜂蜜芥末、照烧、沙拉、番茄
     flavors: [
-      { id: 1, name: '照烧', price: 0 },
-      { id: 2, name: '番茄', price: 0 },
-      { id: 3, name: '蜂蜜芥末', price: 0 }
+      { id: 1, name: '蜂蜜芥末', price: 0 },
+      { id: 2, name: '照烧', price: 0 },
+      { id: 3, name: '沙拉', price: 0 },
+      { id: 4, name: '番茄', price: 0 }
     ],
+    // 更新小料：木鱼花、海苔、肉松，默认全选
     toppings: [
-      { id: 1, name: '海苔', price: 0 },
-      { id: 2, name: '肉松', price: 0 }
-    ]
+      { id: 1, name: '木鱼花', price: 0, defaultSelected: true },
+      { id: 2, name: '海苔', price: 0, defaultSelected: true },
+      { id: 3, name: '肉松', price: 0, defaultSelected: true }
+    ],
+    defaultFlavors: [1, 2, 3, 4], // 默认全选口味
+    defaultToppings: [1, 2, 3]    // 默认全选小料
   });
 
   // 获取今日订单
   const todayOrders = computed(() => {
     try {
       const today = new Date().toISOString().split('T')[0];
-      return orders.value.filter(order => 
+      return orders.value.filter(order =>
         order.createdAt && order.createdAt.startsWith(today)
       );
     } catch (error) {
@@ -45,14 +51,14 @@ export const useOrderStore = defineStore('orders', () => {
   // 添加新订单
   const addOrder = (orderData) => {
     const sizeObj = settings.value.sizes.find(s => s.id === orderData.size);
-    
+
     const newOrder = {
       id: Date.now().toString(),
       pickupCode: generatePickupCode(),
       size: orderData.size,
       sizeName: sizeObj ? sizeObj.name : '',
-      flavors: orderData.flavors || [],
-      toppings: orderData.toppings || [],
+      flavors: orderData.flavors || settings.value.defaultFlavors,
+      toppings: orderData.toppings || settings.value.defaultToppings,
       count: sizeObj ? sizeObj.count : 0,
       totalPrice: calculatePrice(orderData),
       status: 'pending',
@@ -60,21 +66,23 @@ export const useOrderStore = defineStore('orders', () => {
       completedAt: null,
       isManual: false
     };
-    
+
     orders.value.unshift(newOrder);
     saveToLocalStorage();
-    
+
     if (window.syncManager) {
       window.syncManager.sendNewOrder(newOrder);
     }
-    
-    return newOrder.pickupCode;
+
+    return newOrder;
   };
 
   // 手动补单
   const addManualOrder = (orderData) => {
     const orderDataWithManual = {
       ...orderData,
+      flavors: orderData.flavors || settings.value.defaultFlavors,
+      toppings: orderData.toppings || settings.value.defaultToppings,
       isManual: true
     };
     return addOrder(orderDataWithManual);
@@ -93,7 +101,7 @@ export const useOrderStore = defineStore('orders', () => {
       order.status = 'completed';
       order.completedAt = new Date().toISOString();
       saveToLocalStorage();
-      
+
       if (window.syncManager) {
         window.syncManager.sendCompleteOrder(orderId);
       }
@@ -106,7 +114,7 @@ export const useOrderStore = defineStore('orders', () => {
     if (index > -1) {
       orders.value.splice(index, 1);
       saveToLocalStorage();
-      
+
       if (window.syncManager) {
         window.syncManager.sendDeleteOrder(orderId);
       }
@@ -120,38 +128,36 @@ export const useOrderStore = defineStore('orders', () => {
     oneWeekAgo.setDate(today.getDate() - 7);
     const oneMonthAgo = new Date(today);
     oneMonthAgo.setMonth(today.getMonth() - 1);
-    
-    const recentOrders = orders.value.filter(order => 
+
+    const recentOrders = orders.value.filter(order =>
       new Date(order.createdAt) >= oneMonthAgo
     );
-    
-    const weeklyOrders = orders.value.filter(order => 
+
+    const weeklyOrders = orders.value.filter(order =>
       new Date(order.createdAt) >= oneWeekAgo
     );
-    
+
     // 口味分析
     const flavorStats = {};
-    const flavorHourly = {};
     const flavorCombinations = {};
-    
+
     // 份量分析
     const sizeStats = {
       small: { count: 0, revenue: 0 },
       large: { count: 0, revenue: 0 }
     };
-    
+
     // 时段分析
     const hourlyStats = {};
-    
+
     // 小料分析
     const toppingStats = {};
-    const toppingCombinations = {};
-    
+
     recentOrders.forEach(order => {
       // 时段统计
       const hour = new Date(order.createdAt).getHours();
       hourlyStats[hour] = (hourlyStats[hour] || 0) + 1;
-      
+
       // 份量统计
       if (order.size === 'small') {
         sizeStats.small.count++;
@@ -160,25 +166,19 @@ export const useOrderStore = defineStore('orders', () => {
         sizeStats.large.count++;
         sizeStats.large.revenue += order.totalPrice;
       }
-      
+
       // 口味统计
       order.flavors.forEach(flavorId => {
         const flavor = settings.value.flavors.find(f => f.id === flavorId);
         if (flavor) {
           flavorStats[flavor.name] = (flavorStats[flavor.name] || 0) + 1;
-          
-          // 口味时段偏好
-          if (!flavorHourly[flavor.name]) {
-            flavorHourly[flavor.name] = {};
-          }
-          flavorHourly[flavor.name][hour] = (flavorHourly[flavor.name][hour] || 0) + 1;
         }
       });
-      
+
       // 口味组合统计
       const flavorCombo = order.flavors.sort().join('-');
       flavorCombinations[flavorCombo] = (flavorCombinations[flavorCombo] || 0) + 1;
-      
+
       // 小料统计
       order.toppings.forEach(toppingId => {
         const topping = settings.value.toppings.find(t => t.id === toppingId);
@@ -186,12 +186,8 @@ export const useOrderStore = defineStore('orders', () => {
           toppingStats[topping.name] = (toppingStats[topping.name] || 0) + 1;
         }
       });
-      
-      // 小料组合统计
-      const toppingCombo = order.toppings.sort().join('-') || '无小料';
-      toppingCombinations[toppingCombo] = (toppingCombinations[toppingCombo] || 0) + 1;
     });
-    
+
     // 热门口味（近一周）
     const weeklyFlavorStats = {};
     weeklyOrders.forEach(order => {
@@ -202,45 +198,37 @@ export const useOrderStore = defineStore('orders', () => {
         }
       });
     });
-    
+
     const popularFlavors = Object.entries(weeklyFlavorStats)
       .map(([name, count]) => ({ name, count }))
       .sort((a, b) => b.count - a.count);
-    
+
     return {
       // 基础统计
       totalOrders: recentOrders.length,
       totalRevenue: recentOrders.reduce((sum, o) => sum + o.totalPrice, 0),
-      
+
       // 时段分析
       hourlyStats,
-      
+
       // 份量分析
       sizeStats,
       sizePercentage: {
         small: sizeStats.small.count / recentOrders.length * 100 || 0,
         large: sizeStats.large.count / recentOrders.length * 100 || 0
       },
-      sizeRevenuePercentage: {
-        small: sizeStats.small.revenue / (sizeStats.small.revenue + sizeStats.large.revenue) * 100 || 0,
-        large: sizeStats.large.revenue / (sizeStats.small.revenue + sizeStats.large.revenue) * 100 || 0
-      },
-      
+
       // 口味分析
       flavorStats,
       popularFlavors,
-      flavorHourly,
       flavorCombinations: Object.entries(flavorCombinations)
         .map(([combo, count]) => ({ combo, count }))
         .sort((a, b) => b.count - a.count)
         .slice(0, 10),
-      
+
       // 小料分析
       toppingStats,
-      toppingCombinations: Object.entries(toppingCombinations)
-        .map(([combo, count]) => ({ combo, count }))
-        .sort((a, b) => b.count - a.count),
-      
+
       // 时间范围
       startDate: oneMonthAgo.toISOString().split('T')[0],
       endDate: today.toISOString().split('T')[0]
@@ -252,7 +240,7 @@ export const useOrderStore = defineStore('orders', () => {
     const start = new Date(startDate);
     const end = new Date(endDate);
     end.setHours(23, 59, 59, 999);
-    
+
     return orders.value.filter(order => {
       const orderDate = new Date(order.createdAt);
       return orderDate >= start && orderDate <= end;
@@ -262,7 +250,7 @@ export const useOrderStore = defineStore('orders', () => {
   // 获取统计数据
   const getStatsByDate = (startDate, endDate) => {
     const filteredOrders = getOrdersByDate(startDate, endDate);
-    
+
     const stats = {
       totalOrders: filteredOrders.length,
       totalRevenue: filteredOrders.reduce((sum, o) => sum + o.totalPrice, 0),
@@ -277,7 +265,7 @@ export const useOrderStore = defineStore('orders', () => {
     filteredOrders.forEach(order => {
       // 统计大小
       stats.sizeDistribution[order.size]++;
-      
+
       // 统计口味
       order.flavors.forEach(flavorId => {
         const flavor = settings.value.flavors.find(f => f.id === flavorId);
@@ -285,7 +273,7 @@ export const useOrderStore = defineStore('orders', () => {
           stats.flavorStats[flavor.name] = (stats.flavorStats[flavor.name] || 0) + 1;
         }
       });
-      
+
       // 统计小料
       order.toppings.forEach(toppingId => {
         const topping = settings.value.toppings.find(t => t.id === toppingId);
@@ -312,7 +300,7 @@ export const useOrderStore = defineStore('orders', () => {
     try {
       const savedOrders = localStorage.getItem('octopus_orders');
       const savedSettings = localStorage.getItem('octopus_settings');
-      
+
       if (savedOrders) orders.value = JSON.parse(savedOrders);
       if (savedSettings) settings.value = JSON.parse(savedSettings);
     } catch (error) {

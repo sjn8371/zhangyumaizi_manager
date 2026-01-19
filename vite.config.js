@@ -1,10 +1,20 @@
-import { defineConfig } from 'vite'
-import vue from '@vitejs/plugin-vue'
+import { defineConfig } from 'vite';
+import vue from '@vitejs/plugin-vue';
 
 export default defineConfig({
   plugins: [vue()],
   server: {
-    host: true, // 允许局域网访问
-    port: 3000
+    host: true,
+    port: 3000,
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3002',
+        changeOrigin: true
+      },
+      '/ws': {
+        target: 'ws://localhost:3002',
+        ws: true
+      }
+    }
   }
-})
+});

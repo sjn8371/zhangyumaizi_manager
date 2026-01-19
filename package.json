@@ -1,8 +1,9 @@
 {
-  "name": "octopus-ordering",
+  "name": "zhangyumaizi",
   "version": "1.0.0",
   "private": true,
   "type": "commonjs",
+  "description": "章鱼小丸子点餐系统",
   "scripts": {
     "dev": "vite",
     "build": "vite build",

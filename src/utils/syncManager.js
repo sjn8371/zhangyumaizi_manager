@@ -17,41 +17,40 @@ class SyncManager {
   // 连接WebSocket
   connect() {
     try {
-      // 使用当前服务器的WebSocket
       const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
       const host = window.location.hostname;
-      const port = '3001'; // WebSocket服务器端口
-      
+      const port = '3002'; // 使用3002端口
+
       const wsUrl = `${protocol}://${host}:${port}`;
       console.log('连接WebSocket:', wsUrl);
-      
+
       this.ws = new WebSocket(wsUrl);
-      
+
       this.ws.onopen = () => {
         console.log('WebSocket连接成功');
         this.connected = true;
         this.reconnectAttempts = 0;
-        
+
         // 发送当前数据同步
         this.sendSyncData();
       };
-      
+
       this.ws.onmessage = (event) => {
         this.handleMessage(event.data);
       };
-      
+
       this.ws.onclose = () => {
         console.log('WebSocket连接关闭');
         this.connected = false;
         this.scheduleReconnect();
       };
-      
+
       this.ws.onerror = (error) => {
         console.error('WebSocket错误:', error);
         this.connected = false;
         this.fallbackToLocalStorageSync();
       };
-      
+
     } catch (error) {
       console.error('WebSocket初始化失败:', error);
       this.fallbackToLocalStorageSync();
@@ -62,57 +61,31 @@ class SyncManager {
   handleMessage(data) {
     try {
       const message = JSON.parse(data);
-      console.log('收到消息:', message.type);
-      
+
       switch (message.type) {
         case 'init':
           this.mergeData(message.data);
           break;
-          
+
         case 'orders_updated':
           if (this.store) {
             this.store.orders = message.data.orders;
             this.store.saveToLocalStorage();
-            // 触发UI更新
             window.dispatchEvent(new CustomEvent('ordersUpdated'));
           }
           break;
-          
+
         case 'new_order_added':
           if (this.store) {
             const exists = this.store.orders.some(o => o.id === message.order.id);
             if (!exists) {
               this.store.orders.unshift(message.order);
               this.store.saveToLocalStorage();
-              // 触发新订单通知
               window.dispatchEvent(new CustomEvent('newOrder', { detail: message.order }));
             }
           }
           break;
-          
-        case 'order_completed':
-          if (this.store) {
-            const order = this.store.orders.find(o => o.id === message.orderId);
-            if (order && order.status !== 'completed') {
-              order.status = 'completed';
-              order.completedAt = new Date().toISOString();
-              this.store.saveToLocalStorage();
-              window.dispatchEvent(new CustomEvent('ordersUpdated'));
-            }
-          }
-          break;
-          
-        case 'order_deleted':
-          if (this.store) {
-            const index = this.store.orders.findIndex(o => o.id === message.orderId);
-            if (index > -1) {
-              this.store.orders.splice(index, 1);
-              this.store.saveToLocalStorage();
-              window.dispatchEvent(new CustomEvent('ordersUpdated'));
-            }
-          }
-          break;
-          
+
         case 'sync_required':
           this.sendSyncData();
           break;
@@ -168,7 +141,7 @@ class SyncManager {
     if (!serverData.orders || serverData.orders.length === 0 || !this.store) {
       return;
     }
-    
+
     // 简单的合并策略：保留最新的数据
     if (serverData.lastSync > (this.store.lastSync || 0)) {
       this.store.orders = serverData.orders;
@@ -185,7 +158,7 @@ class SyncManager {
     if (this.reconnectAttempts < this.maxReconnectAttempts) {
       this.reconnectAttempts++;
       console.log(`尝试重连 (${this.reconnectAttempts}/${this.maxReconnectAttempts})...`);
-      
+
       setTimeout(() => {
         this.connect();
       }, this.reconnectDelay * this.reconnectAttempts);
@@ -198,7 +171,7 @@ class SyncManager {
   // 降级到LocalStorage同步
   fallbackToLocalStorageSync() {
     console.log('使用LocalStorage同步');
-    
+
     // 监听storage事件实现多标签页同步
     window.addEventListener('storage', (event) => {
       if (event.key === 'octopus_orders' && this.store) {
@@ -217,7 +190,7 @@ class SyncManager {
 // 创建单例
 const syncManager = new SyncManager();
 
-// 将syncManager挂载到window对象，以便在store中使用
+// 将syncManager挂载到window对象
 if (typeof window !== 'undefined') {
   window.syncManager = syncManager;
 }
@@ -225,24 +198,15 @@ if (typeof window !== 'undefined') {
 // 初始化同步
 export const initSync = (store) => {
   syncManager.init(store);
-  
+
   // 监听网络状态变化
   window.addEventListener('online', () => {
     console.log('网络恢复，尝试重新连接WebSocket');
     syncManager.connect();
   });
-  
+
   window.addEventListener('offline', () => {
     console.log('网络断开');
     syncManager.connected = false;
-  });
-};
-
-// 监听新订单事件
-export const listenForNewOrders = (callback) => {
-  window.addEventListener('newOrder', (event) => {
-    if (callback && typeof callback === 'function') {
-      callback(event.detail);
-    }
   });
 };
