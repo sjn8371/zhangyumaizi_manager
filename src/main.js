@@ -1,7 +1,7 @@
 import { createApp } from 'vue';
 import { createPinia } from 'pinia';
 import App from './App.vue';
-import './index.css'; // 添加这行
+import './index.css';
 
 const app = createApp(App);
 const pinia = createPinia();
