@@ -135,7 +135,7 @@ $_SESSION['last_activity'] = time();
         /* 右侧按钮区域 - 20%宽度，上下排列 */
         .shop-controls {
             display: flex;
-            flex-direction: column;
+            flex-direction: row;
             gap: 12px;
             flex: 1;
             min-width: 150px;
@@ -187,6 +187,7 @@ $_SESSION['last_activity'] = time();
             border-radius: 12px;
             margin-bottom: 15px;
             display: flex;
+            flex-wrap: nowrap;
             box-shadow: 0 2px 10px rgba(0,0,0,0.08);
             overflow: hidden;
         }
@@ -206,6 +207,7 @@ $_SESSION['last_activity'] = time();
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            min-width: 0;
         }
         
         .tab:last-child {
