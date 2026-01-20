@@ -63,10 +63,11 @@ document.addEventListener("DOMContentLoaded", function () {
       .getElementById("apply-history-filter")
       .addEventListener("click", loadHistoryOrders);
 
-    // 导出历史订单
-    document
-      .getElementById("export-history")
-      .addEventListener("click", exportHistoryData);
+    // 移除导出历史订单按钮事件
+    // document.getElementById("export-history").addEventListener("click", exportHistoryData);
+
+    // 移除下载二维码按钮事件
+    // document.getElementById("download-qr").addEventListener("click", downloadQRCode);
 
     // 刷新分析按钮
     document
@@ -167,13 +168,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
       // 更新刷新时间显示
       const refreshTimeElement = document.getElementById("refresh-time");
-      refreshTimeElement.textContent = formatTimeAgo(secondsAgo);
+      if (refreshTimeElement) {
+        refreshTimeElement.textContent = formatTimeAgo(secondsAgo);
+      }
 
       // 每3秒刷新一次
       if (secondsAgo >= 3) {
-        if (
-          document.getElementById("today-orders").classList.contains("active")
-        ) {
+        const todayOrdersTab = document.getElementById("today-orders");
+        if (todayOrdersTab && todayOrdersTab.classList.contains("active")) {
           loadOrders("today", true); // true表示静默刷新
         }
       }

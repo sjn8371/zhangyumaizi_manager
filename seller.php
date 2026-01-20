@@ -51,7 +51,7 @@ $_SESSION['last_activity'] = time();
             padding: 15px;
         }
         
-        /* 顶部统计栏 - 单行布局 */
+        /* 顶部统计栏 - 80%左 20%右布局 */
         .header-stats {
             background: white;
             border-radius: 12px;
@@ -60,29 +60,29 @@ $_SESSION['last_activity'] = time();
             box-shadow: 0 3px 15px rgba(0,0,0,0.08);
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            gap: 20px;
-            flex-wrap: nowrap;
-            overflow-x: auto;
+            align-items: stretch;
+            gap: 30px;
         }
         
-        /* 统计数据项 - 水平排列 */
+        /* 左侧统计数据 - 80%宽度 */
         .stats-left {
-            display: flex;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
             gap: 20px;
-            flex: 1;
+            flex: 4;
             min-width: 0;
-            align-items: center;
         }
         
         .stat-item {
             text-align: center;
-            padding: 10px 15px;
+            padding: 12px 15px;
             background: linear-gradient(135deg, #f8f9fa, #e9ecef);
             border-radius: 10px;
             transition: all 0.3s;
-            min-width: 120px;
-            white-space: nowrap;
+            min-width: 140px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
         
         .stat-item:hover {
@@ -93,15 +93,16 @@ $_SESSION['last_activity'] = time();
         
         .stat-label {
             display: block;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             color: #666;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
             font-weight: 500;
+            letter-spacing: 0.5px;
         }
         
         .stat-value {
             display: block;
-            font-size: 1.1rem;
+            font-size: 1.3rem;
             font-weight: bold;
             line-height: 1.2;
         }
@@ -110,12 +111,12 @@ $_SESSION['last_activity'] = time();
             color: #2196F3;
             cursor: pointer;
             transition: all 0.3s;
-            padding: 4px 8px;
+            padding: 5px 10px;
             border-radius: 6px;
             background: #e3f2fd;
             display: inline-block;
-            min-width: 60px;
-            font-size: 1rem;
+            min-width: 70px;
+            font-size: 1.1rem;
         }
         
         #refresh-time:hover {
@@ -131,30 +132,31 @@ $_SESSION['last_activity'] = time();
             color: #ff9800;
         }
         
-        /* 右侧按钮区域 - 水平排列 */
+        /* 右侧按钮区域 - 20%宽度，上下排列 */
         .shop-controls {
             display: flex;
+            flex-direction: column;
             gap: 12px;
-            flex-shrink: 0;
-            align-items: center;
+            flex: 1;
+            min-width: 150px;
+            max-width: 180px;
         }
         
         .shop-btn {
-            padding: 10px 16px;
+            padding: 14px 20px;
             border: none;
-            border-radius: 8px;
+            border-radius: 10px;
             cursor: pointer;
             font-weight: 600;
             transition: all 0.3s;
-            font-size: 0.9rem;
+            font-size: 1rem;
             white-space: nowrap;
             text-align: center;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 10px;
             letter-spacing: 0.5px;
-            min-width: 100px;
         }
         
         .qr-btn {
@@ -422,7 +424,7 @@ $_SESSION['last_activity'] = time();
         }
         
         .serve-btn {
-            background: linear-gradient(135deg, #4CAF50, #45a049);
+background: linear-gradient(135deg, #4CAF50, #45a049);
             color: white;
         }
         
@@ -894,7 +896,7 @@ min-width: 140px;
                     </div>
                     
                     <button class="filter-btn" id="apply-history-filter">查询</button>
-                    <button class="filter-btn export-btn" id="export-history">导出数据</button>
+                    <!-- 移除导出数据按钮 -->
                 </div>
                 
                 <div class="orders-list" id="history-orders-list">

@@ -204,10 +204,40 @@ function showOrderModal(order) {
 }
 
 function closeModal() {
-    document.getElementById('order-modal').style.display = 'none';
+    const modal = document.getElementById('order-modal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
     // 重置选择
     resetSelection();
 }
+
+// 在DOM加载完成后添加事件监听器
+document.addEventListener('DOMContentLoaded', function() {
+    // 绑定关闭按钮事件
+    const closeBtn = document.querySelector('.close-modal');
+    if (closeBtn) {
+        closeBtn.addEventListener('click', closeModal);
+    }
+    
+    // 绑定确认按钮事件
+    const confirmBtn = document.getElementById('confirm-order');
+    if (confirmBtn) {
+        confirmBtn.addEventListener('click', closeModal);
+    }
+    
+    // 绑定保存截图按钮事件
+    const saveBtn = document.getElementById('save-screenshot');
+    if (saveBtn) {
+        saveBtn.addEventListener('click', saveOrderScreenshot);
+    }
+    
+    // 绑定查询订单按钮事件
+    const queryBtn = document.getElementById('query-order');
+    if (queryBtn) {
+        queryBtn.addEventListener('click', checkOrderStatus);
+    }
+});
 
 function resetSelection() {
     selectedPortion = null;
