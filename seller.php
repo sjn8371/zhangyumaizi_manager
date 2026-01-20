@@ -46,39 +46,63 @@ $_SESSION['last_activity'] = time();
         }
         
         .container {
-            max-width: 800px;
+            max-width: 1200px;
             margin: 0 auto;
             padding: 15px;
         }
         
-        /* 顶部统计栏 */
+        /* 顶部统计栏 - 80%左 20%右布局 */
         .header-stats {
             background: white;
             border-radius: 12px;
-            padding: 15px;
+            padding: 15px 20px;
             margin-bottom: 15px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            display: grid;
-            grid-template-columns: 1fr auto auto;
-            gap: 15px;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+            display: flex;
+            justify-content: space-between;
             align-items: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+        
+        /* 左侧统计数据 - 80%宽度 */
+        .stats-left {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            flex: 4;
+            min-width: 0;
         }
         
         .stat-item {
             text-align: center;
+            padding: 12px 15px;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 10px;
+            transition: all 0.3s;
+            min-width: 140px;
+        }
+        
+        .stat-item:hover {
+            background: linear-gradient(135deg, #e9ecef, #dee2e6);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
         
         .stat-label {
             display: block;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             color: #666;
-            margin-bottom: 4px;
+            margin-bottom: 8px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
         }
         
         .stat-value {
             display: block;
-            font-size: 1.1rem;
+            font-size: 1.3rem;
             font-weight: bold;
+            line-height: 1.2;
         }
         
         #refresh-time {
@@ -87,10 +111,15 @@ $_SESSION['last_activity'] = time();
             transition: all 0.3s;
             padding: 5px 10px;
             border-radius: 6px;
+            background: #e3f2fd;
+            display: inline-block;
+            min-width: 70px;
+            font-size: 1.1rem;
         }
         
         #refresh-time:hover {
-            background: #e3f2fd;
+            background: #bbdefb;
+            transform: scale(1.05);
         }
         
         #total-revenue {
@@ -101,75 +130,105 @@ $_SESSION['last_activity'] = time();
             color: #ff9800;
         }
         
+        /* 右侧按钮区域 - 20%宽度 */
         .shop-controls {
             display: flex;
-            gap: 10px;
+            flex-direction: column;
+            gap: 12px;
+            flex: 1;
+            min-width: 150px;
+            max-width: 180px;
         }
         
         .shop-btn {
-            padding: 10px 20px;
+            padding: 14px 20px;
             border: none;
-            border-radius: 8px;
+            border-radius: 10px;
             cursor: pointer;
-            font-weight: 500;
+            font-weight: 600;
             transition: all 0.3s;
-            font-size: 0.9rem;
+            font-size: 1rem;
             white-space: nowrap;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            letter-spacing: 0.5px;
         }
         
         .qr-btn {
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
         }
         
         .qr-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
         }
         
         .close-btn {
-            background: linear-gradient(135deg, #ff5e62, #ff9966);
+            background: linear-gradient(135deg, #ff5e62 0%, #ff9966 100%);
             color: white;
+            box-shadow: 0 4px 15px rgba(255, 94, 98, 0.3);
         }
         
         .close-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(255, 94, 98, 0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255, 94, 98, 0.4);
         }
         
-        /* Tab切换样式 */
+        /* Tab切换 - 横向flex平均分布 */
         .tabs-container {
             background: white;
             border-radius: 12px;
             margin-bottom: 15px;
-            padding: 5px;
             display: flex;
-            gap: 2px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            overflow: hidden;
         }
         
         .tab {
             flex: 1;
-            padding: 12px;
+            padding: 16px 10px;
             background: #f8f9fa;
             border: none;
-            border-radius: 8px;
+            border-right: 1px solid #e0e0e0;
             cursor: pointer;
-            font-weight: 500;
+            font-weight: 600;
             color: #666;
             text-align: center;
             transition: all 0.3s;
+            font-size: 0.95rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .tab:last-child {
+            border-right: none;
         }
         
         .tab.active {
             background: white;
             color: #ff5e62;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #ff5e62, #ff9966);
         }
         
         /* 订单内容区域 */
         .content-area {
-            height: calc(100vh - 220px);
+            height: calc(100vh - 230px);
             overflow-y: auto;
             padding-right: 5px;
         }
@@ -182,116 +241,207 @@ $_SESSION['last_activity'] = time();
             display: block;
         }
         
-        /* 扁平化订单列表 */
+        /* 优化后的订单列表 */
         .orders-list {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 10px;
         }
         
         .order-item {
             background: white;
-            border-radius: 10px;
-            padding: 12px 15px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-            display: grid;
-            grid-template-columns: auto 1fr auto;
-            gap: 12px;
-            align-items: center;
-            border-left: 4px solid #4CAF50;
+            border-radius: 12px;
+            padding: 15px 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
             transition: all 0.2s;
         }
         
         .order-item.pending {
-            border-left-color: #ff9800;
+            border-left: 4px solid #ff9800;
         }
         
         .order-item.completed {
-            border-left-color: #2196F3;
+            border-left: 4px solid #4CAF50;
         }
         
         .order-item:hover {
-            box-shadow: 0 3px 6px rgba(0,0,0,0.12);
-            transform: translateY(-1px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+        
+        /* 订单头部：取餐码 + 时间 + 状态 */
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .order-id-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
         }
         
         .order-id {
-            font-size: 1.2rem;
+            font-size: 1.5rem;
             font-weight: bold;
             color: #333;
-            width: 65px;
+            background: #f8f9fa;
+            padding: 8px 15px;
+            border-radius: 8px;
+            min-width: 100px;
             text-align: center;
         }
         
-        .order-info {
+        .order-time-status {
             display: flex;
             flex-direction: column;
-            gap: 4px;
+            gap: 5px;
         }
         
-        .order-line {
-            display: flex;
-            gap: 8px;
-            align-items: center;
+        .order-time {
             font-size: 0.9rem;
-        }
-        
-        .order-label {
             color: #666;
-            min-width: 25px;
         }
         
-        .order-value {
+        .order-status {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: inline-block;
+            text-align: center;
+            min-width: 80px;
+        }
+        
+        .status-pending {
+            background: #fff3e0;
+            color: #ff9800;
+        }
+        
+        .status-completed {
+            background: #e8f5e9;
+            color: #4CAF50;
+        }
+        
+        /* 订单详细信息 */
+        .order-details {
+            margin-bottom: 15px;
+        }
+        
+        .detail-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+        
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 0;
+        }
+        
+        .detail-label {
+            color: #666;
+            font-size: 0.9rem;
+            min-width: 60px;
+            font-weight: 500;
+        }
+        
+        .detail-value {
             color: #333;
+            font-size: 1rem;
+            font-weight: 500;
+            flex: 1;
         }
         
+        .detail-value .portion {
+            color: #ff5e62;
+            font-weight: bold;
+        }
+        
+        .detail-value .flavors {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+        
+        .flavor-tag {
+            background: #e3f2fd;
+            color: #1976d2;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+        }
+        
+        .detail-value .toppings {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+        
+        .topping-tag {
+            background: #f3e5f5;
+            color: #7b1fa2;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+        }
+        
+        .detail-price {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #ff5e62;
+            text-align: right;
+            margin-top: 5px;
+        }
+        
+        /* 订单操作按钮 */
         .order-actions {
             display: flex;
-            gap: 6px;
+            gap: 10px;
+            justify-content: flex-end;
+            padding-top: 15px;
+            border-top: 1px dashed #f0f0f0;
         }
         
         .action-btn {
-            padding: 6px 12px;
+            padding: 8px 20px;
             border: none;
-            border-radius: 6px;
+            border-radius: 8px;
             cursor: pointer;
-            font-size: 0.85rem;
+            font-size: 0.95rem;
+            font-weight: 600;
             transition: all 0.3s;
+            min-width: 100px;
         }
         
-        .complete-btn {
-            background: #4CAF50;
+        .serve-btn {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
             color: white;
         }
         
-        .complete-btn:hover {
-            background: #45a049;
+        .serve-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
         }
         
         .delete-btn {
-            background: #ff5e62;
+            background: linear-gradient(135deg, #ff5e62, #ff4757);
             color: white;
         }
         
         .delete-btn:hover {
-            background: #e53935;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 94, 98, 0.3);
         }
         
-        .order-price {
-            font-weight: bold;
-            color: #ff5e62;
-            font-size: 1rem;
-            text-align: right;
-            min-width: 50px;
-        }
-        
-        .order-time {
-            font-size: 0.8rem;
-            color: #999;
-            margin-top: 2px;
-        }
-        
-        /* 模态框样式 */
+        /* 二维码弹窗 */
         .modal {
             display: none;
             position: fixed;
@@ -310,7 +460,7 @@ $_SESSION['last_activity'] = time();
             background-color: white;
             border-radius: 15px;
             width: 100%;
-            max-width: 400px;
+            max-width: 450px;
             animation: modalSlideIn 0.3s ease;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
         }
@@ -336,7 +486,10 @@ $_SESSION['last_activity'] = time();
         
         .modal-header h2 {
             color: #333;
-            font-size: 1.3rem;
+            font-size: 1.4rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
         
         .close-modal {
@@ -344,6 +497,7 @@ $_SESSION['last_activity'] = time();
             cursor: pointer;
             color: #999;
             transition: color 0.3s;
+            line-height: 1;
         }
         
         .close-modal:hover {
@@ -362,14 +516,14 @@ $_SESSION['last_activity'] = time();
         }
         
         .modal-btn {
-            padding: 12px 30px;
+            padding: 12px 25px;
             background-color: #4CAF50;
             color: white;
             border: none;
             border-radius: 8px;
             cursor: pointer;
             font-size: 1rem;
-            font-weight: 500;
+            font-weight: 600;
             transition: all 0.3s ease;
             width: 100%;
             margin-top: 10px;
@@ -396,207 +550,228 @@ $_SESSION['last_activity'] = time();
             background-color: #d32f2f;
         }
         
+        .update-btn {
+            background: linear-gradient(135deg, #2196F3, #1976d2);
+        }
+        
+        .update-btn:hover {
+            background: linear-gradient(135deg, #1976d2, #1565c0);
+        }
+        
         .download-btn {
-            background-color: #2196F3;
+            background: linear-gradient(135deg, #9c27b0, #7b1fa2);
         }
         
         .download-btn:hover {
-            background-color: #1976d2;
+            background: linear-gradient(135deg, #7b1fa2, #6a1b9a);
         }
         
-        /* 二维码样式 */
+        /* 二维码容器 */
         #qrcode-container {
             margin: 20px auto;
-            padding: 20px;
+            padding: 25px;
             background: white;
-            border-radius: 10px;
+            border-radius: 12px;
             display: inline-block;
+            border: 1px solid #eee;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
         }
         
         .qr-info {
-            margin-top: 15px;
+            margin-top: 20px;
             color: #666;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
         }
         
         .qr-expiry {
             color: #ff9800;
-            font-weight: 500;
-            margin-top: 5px;
+            font-weight: 600;
+            margin-top: 8px;
+            font-size: 1rem;
+            padding: 8px 15px;
+            background: #fff3e0;
+            border-radius: 8px;
+            display: inline-block;
         }
         
-        /* 加载状态 */
+        .qr-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        /* 其他样式 */
         .loading {
             text-align: center;
-            padding: 40px;
+            padding: 60px;
             color: #666;
+            font-size: 1.1rem;
         }
         
         .empty-state {
             text-align: center;
-            padding: 60px 20px;
+            padding: 80px 20px;
+            background: white;
+            border-radius: 12px;
+            margin-top: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
         }
         
         .empty-icon {
-            font-size: 3rem;
-            margin-bottom: 15px;
+            font-size: 3.5rem;
+            margin-bottom: 20px;
             opacity: 0.3;
         }
         
         .empty-state h3 {
             color: #666;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
         }
         
         .empty-state p {
             color: #999;
+            font-size: 1rem;
         }
         
-        /* 历史订单筛选 */
         .history-filters {
             background: white;
-            padding: 15px;
-            border-radius: 10px;
+            padding: 20px;
+            border-radius: 12px;
             margin-bottom: 15px;
             display: flex;
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 15px;
             align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
         }
         
         .filter-group {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
         }
         
         .filter-group label {
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             color: #666;
             white-space: nowrap;
+            font-weight: 500;
         }
         
         .filter-group select,
         .filter-group input {
-            padding: 8px 12px;
-            border: 2px solid #ddd;
-            border-radius: 6px;
-            font-size: 0.9rem;
-            min-width: 120px;
+            padding: 10px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            min-width: 140px;
+            background: white;
         }
         
         .filter-btn {
-            padding: 8px 16px;
-            background: #4CAF50;
+            padding: 10px 25px;
+            background: linear-gradient(135deg, #2196F3, #1976d2);
             color: white;
             border: none;
-            border-radius: 6px;
+            border-radius: 8px;
             cursor: pointer;
-            font-size: 0.9rem;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .filter-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
         }
         
         .export-btn {
-            background: #2196F3;
+            background: linear-gradient(135deg, #9c27b0, #7b1fa2);
             margin-left: auto;
         }
         
-        /* AI分析面板 */
         .analytics-panel {
             background: white;
             border-radius: 12px;
-            padding: 20px;
-        }
-        
-        .analytics-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        
-        .analytics-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-        
-        .analytics-card {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
-            border-left: 4px solid #667eea;
-        }
-        
-        .analytics-card h4 {
-            color: #333;
-            margin-bottom: 10px;
-            font-size: 0.95rem;
-        }
-        
-        .analytics-card .value {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #ff5e62;
-        }
-        
-        .analytics-suggestions {
-            background: #e3f2fd;
-            padding: 15px;
-            border-radius: 8px;
-            border-left: 4px solid #2196F3;
-        }
-        
-        .analytics-suggestions h4 {
-            color: #1976d2;
-            margin-bottom: 10px;
-        }
-        
-        .analytics-suggestions ul {
-            padding-left: 20px;
-            color: #333;
-        }
-        
-        .analytics-suggestions li {
-            margin-bottom: 8px;
-            font-size: 0.95rem;
-        }
-        
-        .refresh-time {
-            font-size: 0.8rem;
-            color: #888;
-            text-align: right;
-            margin-top: 10px;
+            padding: 25px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
         }
         
         /* 响应式调整 */
-        @media (max-width: 768px) {
+        @media (max-width: 992px) {
             .header-stats {
-                grid-template-columns: 1fr;
-                text-align: center;
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .stats-left {
+                width: 100%;
+                grid-template-columns: repeat(3, 1fr);
             }
             
             .shop-controls {
-                grid-column: 1;
-                justify-content: center;
+                width: 100%;
+                max-width: 100%;
+                flex-direction: row;
             }
             
-            .order-item {
-                grid-template-columns: 1fr;
-                gap: 8px;
+            .detail-row {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .stats-left {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 15px;
+            }
+            
+            .stat-item {
+                padding: 10px;
+                min-width: auto;
+            }
+            
+            .shop-controls {
+                flex-direction: column;
+            }
+            
+            .tab {
+                padding: 14px 8px;
+                font-size: 0.9rem;
+            }
+            
+            .order-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .order-id-section {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
             }
             
             .order-id {
-                width: auto;
-                text-align: left;
+                width: 100%;
+            }
+            
+            .order-time-status {
+                width: 100%;
+            }
+            
+            .detail-row {
+                grid-template-columns: 1fr;
             }
             
             .order-actions {
-                justify-content: flex-start;
+                flex-direction: column;
             }
             
-            .order-price {
-                text-align: left;
+            .action-btn {
+                width: 100%;
             }
             
             .history-filters {
@@ -614,22 +789,29 @@ $_SESSION['last_activity'] = time();
             }
         }
         
-        @media (max-width: 480px) {
-            .shop-controls {
-                flex-direction: column;
-                width: 100%;
-            }
-            
-            .shop-btn {
-                width: 100%;
+        @media (max-width: 576px) {
+            .stats-left {
+                grid-template-columns: 1fr;
             }
             
             .tabs-container {
                 flex-direction: column;
             }
             
-            .analytics-grid {
-                grid-template-columns: 1fr;
+            .tab {
+                border-right: none;
+                border-bottom: 1px solid #e0e0e0;
+            }
+            
+            .tab.active::after {
+                top: 0;
+                bottom: auto;
+                height: 3px;
+            }
+            
+            .detail-value .flavors,
+            .detail-value .toppings {
+                justify-content: flex-start;
             }
         }
     </style>
@@ -638,24 +820,32 @@ $_SESSION['last_activity'] = time();
     <div class="container">
         <!-- 顶部统计栏 -->
         <div class="header-stats">
-            <div class="stat-item">
-                <span class="stat-label">刷新时间</span>
-                <span class="stat-value" id="refresh-time">0s前</span>
-            </div>
-            
-            <div class="stat-item">
-                <span class="stat-label">今日营业额</span>
-                <span class="stat-value" id="total-revenue">0元</span>
-            </div>
-            
-            <div class="stat-item">
-                <span class="stat-label">待处理/总单量</span>
-                <span class="stat-value" id="pending-total-orders">0/0</span>
+            <div class="stats-left">
+                <div class="stat-item">
+                    <span class="stat-label">刷新时间</span>
+                    <span class="stat-value" id="refresh-time">0s前</span>
+                </div>
+                
+                <div class="stat-item">
+                    <span class="stat-label">今日营业额</span>
+                    <span class="stat-value" id="total-revenue">0元</span>
+                </div>
+                
+                <div class="stat-item">
+                    <span class="stat-label">待处理/总单量</span>
+                    <span class="stat-value" id="pending-total-orders">0/0</span>
+                </div>
             </div>
             
             <div class="shop-controls">
-                <button class="shop-btn qr-btn" id="generate-qr">开店生成二维码</button>
-                <button class="shop-btn close-btn" id="close-shop">闭店</button>
+                <button class="shop-btn qr-btn" id="view-qr">
+                    <span class="btn-icon">👁️</span>
+                    <span>查看二维码</span>
+                </button>
+                <button class="shop-btn close-btn" id="close-shop">
+                    <span class="btn-icon">🔒</span>
+                    <span>闭店</span>
+                </button>
             </div>
         </div>
         
@@ -759,16 +949,22 @@ $_SESSION['last_activity'] = time();
     <div class="modal" id="qr-modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>店铺二维码</h2>
+                <h2>
+                    <span>🏪</span>
+                    店铺二维码
+                </h2>
                 <span class="close-modal" id="close-qr-modal">&times;</span>
             </div>
             <div class="modal-body">
-                <div id="qrcode-container"></div>
+                <div id="qrcode-container">
+                    <div class="loading">正在生成二维码...</div>
+                </div>
                 <div class="qr-info">
                     <p>请让顾客扫描此二维码进入点餐页面</p>
-                    <p class="qr-expiry" id="qr-expiry"></p>
+                    <p class="qr-expiry" id="qr-expiry">有效期至：--</p>
                 </div>
-                <div class="modal-footer">
+                <div class="qr-actions">
+                    <button class="modal-btn update-btn" id="update-qr">更新二维码</button>
                     <button class="modal-btn download-btn" id="download-qr">下载二维码</button>
                     <button class="modal-btn cancel-btn" id="close-qr">关闭</button>
                 </div>
