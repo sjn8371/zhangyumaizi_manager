@@ -51,7 +51,7 @@ $_SESSION['last_activity'] = time();
             padding: 15px;
         }
         
-        /* 顶部统计栏 - 80%左 20%右布局 */
+        /* 顶部统计栏 - 单行布局 */
         .header-stats {
             background: white;
             border-radius: 12px;
@@ -61,26 +61,28 @@ $_SESSION['last_activity'] = time();
             display: flex;
             justify-content: space-between;
             align-items: center;
-            gap: 30px;
-            flex-wrap: wrap;
+            gap: 20px;
+            flex-wrap: nowrap;
+            overflow-x: auto;
         }
         
-        /* 左侧统计数据 - 80%宽度 */
+        /* 统计数据项 - 水平排列 */
         .stats-left {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            display: flex;
             gap: 20px;
-            flex: 4;
+            flex: 1;
             min-width: 0;
+            align-items: center;
         }
         
         .stat-item {
             text-align: center;
-            padding: 12px 15px;
+            padding: 10px 15px;
             background: linear-gradient(135deg, #f8f9fa, #e9ecef);
             border-radius: 10px;
             transition: all 0.3s;
-            min-width: 140px;
+            min-width: 120px;
+            white-space: nowrap;
         }
         
         .stat-item:hover {
@@ -91,16 +93,15 @@ $_SESSION['last_activity'] = time();
         
         .stat-label {
             display: block;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             color: #666;
-            margin-bottom: 8px;
+            margin-bottom: 5px;
             font-weight: 500;
-            letter-spacing: 0.5px;
         }
         
         .stat-value {
             display: block;
-            font-size: 1.3rem;
+            font-size: 1.1rem;
             font-weight: bold;
             line-height: 1.2;
         }
@@ -109,12 +110,12 @@ $_SESSION['last_activity'] = time();
             color: #2196F3;
             cursor: pointer;
             transition: all 0.3s;
-            padding: 5px 10px;
+            padding: 4px 8px;
             border-radius: 6px;
             background: #e3f2fd;
             display: inline-block;
-            min-width: 70px;
-            font-size: 1.1rem;
+            min-width: 60px;
+            font-size: 1rem;
         }
         
         #refresh-time:hover {
@@ -130,31 +131,30 @@ $_SESSION['last_activity'] = time();
             color: #ff9800;
         }
         
-        /* 右侧按钮区域 - 20%宽度 */
+        /* 右侧按钮区域 - 水平排列 */
         .shop-controls {
             display: flex;
-            flex-direction: column;
             gap: 12px;
-            flex: 1;
-            min-width: 150px;
-            max-width: 180px;
+            flex-shrink: 0;
+            align-items: center;
         }
         
         .shop-btn {
-            padding: 14px 20px;
+            padding: 10px 16px;
             border: none;
-            border-radius: 10px;
+            border-radius: 8px;
             cursor: pointer;
             font-weight: 600;
             transition: all 0.3s;
-            font-size: 1rem;
+            font-size: 0.9rem;
             white-space: nowrap;
             text-align: center;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
+            gap: 8px;
             letter-spacing: 0.5px;
+            min-width: 100px;
         }
         
         .qr-btn {
@@ -458,7 +458,7 @@ $_SESSION['last_activity'] = time();
         
         .modal-content {
             background-color: white;
-            border-radius: 15px;
+border-radius: 15px;
             width: 100%;
             max-width: 450px;
             animation: modalSlideIn 0.3s ease;
@@ -536,6 +536,14 @@ $_SESSION['last_activity'] = time();
         
         .cancel-btn {
             background-color: #999;
+        }
+        /* 移除导出按钮样式 */
+        .export-btn {
+            display: none;
+        }
+        
+        .download-btn {
+            display: none;
         }
         
         .cancel-btn:hover {
@@ -666,7 +674,7 @@ $_SESSION['last_activity'] = time();
             border: 2px solid #e0e0e0;
             border-radius: 8px;
             font-size: 0.95rem;
-            min-width: 140px;
+min-width: 140px;
             background: white;
         }
         
@@ -702,98 +710,76 @@ $_SESSION['last_activity'] = time();
         /* 响应式调整 */
         @media (max-width: 992px) {
             .header-stats {
-                flex-direction: column;
-                gap: 20px;
-            }
-            
-            .stats-left {
-                width: 100%;
-                grid-template-columns: repeat(3, 1fr);
-            }
-            
-            .shop-controls {
-                width: 100%;
-                max-width: 100%;
                 flex-direction: row;
+                gap: 15px;
+                overflow-x: auto;
+                padding: 12px 15px;
             }
             
-            .detail-row {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-        
-        @media (max-width: 768px) {
             .stats-left {
-                grid-template-columns: repeat(3, 1fr);
+                flex-wrap: nowrap;
                 gap: 15px;
             }
             
             .stat-item {
-                padding: 10px;
-                min-width: auto;
+                min-width: 100px;
+                padding: 8px 12px;
             }
             
             .shop-controls {
-                flex-direction: column;
+                flex-shrink: 0;
             }
             
-            .tab {
-                padding: 14px 8px;
-                font-size: 0.9rem;
+            .shop-btn {
+                min-width: 90px;
+                padding: 8px 12px;
+                font-size: 0.85rem;
             }
-            
-            .order-header {
+        }
+        
+        @media (max-width: 768px) {
+            .header-stats {
                 flex-direction: column;
-                align-items: flex-start;
                 gap: 15px;
             }
             
-            .order-id-section {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 10px;
-            }
-            
-            .order-id {
+            .stats-left {
                 width: 100%;
+                justify-content: space-between;
+                flex-wrap: wrap;
             }
             
-            .order-time-status {
+            .stat-item {
+                flex: 1;
+                min-width: 100px;
+            }
+            
+            .shop-controls {
                 width: 100%;
-            }
-            
-            .detail-row {
-                grid-template-columns: 1fr;
-            }
-            
-            .order-actions {
-                flex-direction: column;
-            }
-            
-            .action-btn {
-                width: 100%;
-            }
-            
-            .history-filters {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            
-            .filter-group {
-                width: 100%;
-            }
-            
-            .export-btn {
-                margin-left: 0;
-                width: 100%;
+                justify-content: center;
             }
         }
         
         @media (max-width: 576px) {
             .stats-left {
-                grid-template-columns: 1fr;
+                flex-direction: column;
+                gap: 10px;
             }
             
+            .stat-item {
+                width: 100%;
+            }
+            
+            .shop-controls {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .shop-btn {
+                width: 100%;
+            }
+        }
+        
             .tabs-container {
                 flex-direction: column;
             }
@@ -965,7 +951,7 @@ $_SESSION['last_activity'] = time();
                 </div>
                 <div class="qr-actions">
                     <button class="modal-btn update-btn" id="update-qr">更新二维码</button>
-                    <button class="modal-btn download-btn" id="download-qr">下载二维码</button>
+                    <!-- 移除下载二维码按钮 -->
                     <button class="modal-btn cancel-btn" id="close-qr">关闭</button>
                 </div>
             </div>

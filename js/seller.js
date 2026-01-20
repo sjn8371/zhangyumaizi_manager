@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", function () {
         // 更新活跃Tab
         document.querySelectorAll(".tab").forEach((t) => {
           t.classList.remove("active");
-        });
+});
         this.classList.add("active");
 
         // 显示对应内容
@@ -309,11 +309,15 @@ document.addEventListener("DOMContentLoaded", function () {
             .join("")
         : '<span class="topping-tag" style="background:#f5f5f5;color:#999">无</span>';
 
+    // 修复订单号显示问题 - 使用order.order_id而不是order.id
+    const orderId = order.order_id || order.id || '0000';
+    const orderPrice = order.price || (order.portion === 'small' ? 10 : 15);
+
     return `
-          <div class="order-item ${statusClass}" data-order-id="${order.id}">
+          <div class="order-item ${statusClass}" data-order-id="${orderId}">
               <div class="order-header">
                   <div class="order-id-section">
-                      <div class="order-id">#${order.id}</div>
+                      <div class="order-id">#${orderId}</div>
                       <div class="order-time-status">
                           <div class="order-time">${orderDate} ${orderTime}</div>
                           <div class="order-status status-${
@@ -346,15 +350,15 @@ document.addEventListener("DOMContentLoaded", function () {
                           </span>
                       </div>
                   </div>
-                  <div class="detail-price">总价: ${order.price}元</div>
+                  <div class="detail-price">总价: ${orderPrice}元</div>
               </div>
               
               ${
                 order.status === "pending"
                   ? `
                   <div class="order-actions">
-                      <button class="action-btn serve-btn" data-action="complete" data-id="${order.id}">出餐</button>
-                      <button class="action-btn delete-btn" data-action="delete" data-id="${order.id}">删除</button>
+                      <button class="action-btn serve-btn" data-action="complete" data-id="${orderId}">出餐</button>
+                      <button class="action-btn delete-btn" data-action="delete" data-id="${orderId}">删除</button>
                   </div>
               `
                   : ""

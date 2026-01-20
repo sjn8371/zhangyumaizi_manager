@@ -4,6 +4,24 @@ let selectedFlavors = [];
 let selectedToppings = [];
 let currentOrder = null;
 
+// 中文映射配置
+const chineseMapping = {
+    // 分量
+    small: '小份',
+    large: '大份',
+    
+    // 口味
+    salad: '沙拉酱',
+    honey_mustard: '蜂蜜芥末',
+    teriyaki: '照烧酱',
+    tomato: '番茄酱',
+    
+    // 小料
+    bonito: '木鱼花',
+    pork_floss: '肉松',
+    seaweed: '海苔'
+};
+
 // DOM加载完成后初始化
 document.addEventListener('DOMContentLoaded', function() {
     initEventListeners();
@@ -11,41 +29,63 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function initEventListeners() {
-    // 分量选择
-    document.querySelectorAll('.portion-option').forEach(option => {
+    // 分量选择 - 修复选择器
+    document.querySelectorAll('.section:nth-child(1) .option').forEach(option => {
         option.addEventListener('click', function() {
-            document.querySelectorAll('.portion-option').forEach(o => {
+            document.querySelectorAll('.section:nth-child(1) .option').forEach(o => {
                 o.classList.remove('selected');
             });
             this.classList.add('selected');
-            selectedPortion = this.dataset.portion;
+            selectedPortion = this.dataset.value;
             updateOrderSummary();
         });
     });
 
-    // 口味选择
-    document.querySelectorAll('input[name="flavor"]').forEach(checkbox => {
-        checkbox.addEventListener('change', function() {
-            if (this.checked) {
-                selectedFlavors.push(this.value);
+    // 口味选择 - 修复选择器
+    document.querySelectorAll('.section:nth-child(2) .option').forEach(option => {
+        option.addEventListener('click', function() {
+            if (this.classList.contains('selected')) {
+                this.classList.remove('selected');
+                selectedFlavors = selectedFlavors.filter(f => f !== this.dataset.value);
             } else {
-                selectedFlavors = selectedFlavors.filter(f => f !== this.value);
+                this.classList.add('selected');
+                selectedFlavors.push(this.dataset.value);
             }
             updateOrderSummary();
         });
     });
 
-    // 小料选择
-    document.querySelectorAll('input[name="topping"]').forEach(checkbox => {
-        checkbox.addEventListener('change', function() {
-            if (this.checked) {
-                selectedToppings.push(this.value);
+    // 小料选择 - 修复选择器
+    document.querySelectorAll('.section:nth-child(3) .option').forEach(option => {
+        option.addEventListener('click', function() {
+            if (this.classList.contains('selected')) {
+                this.classList.remove('selected');
+                selectedToppings = selectedToppings.filter(t => t !== this.dataset.value);
             } else {
-                selectedToppings = selectedToppings.filter(t => t !== this.value);
+                this.classList.add('selected');
+                selectedToppings.push(this.dataset.value);
             }
             updateOrderSummary();
         });
     });
+
+    // 下单按钮事件绑定
+    document.getElementById('place-order').addEventListener('click', placeOrder);
+
+    // 查询订单按钮事件绑定
+    document.getElementById('check-order').addEventListener('click', checkOrderStatus);
+
+    // 关闭模态框事件绑定
+    document.querySelector('.close-modal').addEventListener('click', closeModal);
+    document.getElementById('close-order-modal').addEventListener('click', closeModal);
+
+    // 保存截图按钮事件绑定
+    document.getElementById('save-image').addEventListener('click', saveOrderScreenshot);
+}
+
+// 将英文值转换为中文显示
+function translateToChinese(value) {
+    return chineseMapping[value] || value;
 }
 
 function updateOrderSummary() {
@@ -53,33 +93,35 @@ function updateOrderSummary() {
         prices: { small: 10, large: 15 }
     };
     
-    // 更新分量显示
-    const portionDisplay = document.getElementById('selected-portion');
+    // 更新分量显示 - 修复ID
+    const portionDisplay = document.getElementById('summary-portion');
     if (selectedPortion) {
         portionDisplay.textContent = selectedPortion === 'small' ? '小份(6个)' : '大份(10个)';
     } else {
         portionDisplay.textContent = '未选择';
     }
 
-    // 更新口味显示
-    const flavorsDisplay = document.getElementById('selected-flavors');
+    // 更新口味显示 - 修复ID，使用中文显示
+    const flavorsDisplay = document.getElementById('summary-flavors');
     if (selectedFlavors.length > 0) {
-        flavorsDisplay.textContent = selectedFlavors.join(', ');
+        const chineseFlavors = selectedFlavors.map(f => translateToChinese(f));
+        flavorsDisplay.textContent = chineseFlavors.join(', ');
     } else {
         flavorsDisplay.textContent = '未选择';
     }
 
-    // 更新小料显示
-    const toppingsDisplay = document.getElementById('selected-toppings');
+    // 更新小料显示 - 修复ID，使用中文显示
+    const toppingsDisplay = document.getElementById('summary-toppings');
     if (selectedToppings.length > 0) {
-        toppingsDisplay.textContent = selectedToppings.join(', ');
+        const chineseToppings = selectedToppings.map(t => translateToChinese(t));
+        toppingsDisplay.textContent = chineseToppings.join(', ');
     } else {
         toppingsDisplay.textContent = '未选择';
     }
 
-    // 计算总价
+    // 计算总价 - 修复ID
     const totalPrice = selectedPortion ? config.prices[selectedPortion] : 0;
-    document.getElementById('total-price').textContent = `¥${totalPrice}`;
+    document.getElementById('summary-price').textContent = totalPrice + '元';
 }
 
 async function placeOrder() {
@@ -120,20 +162,42 @@ async function placeOrder() {
 }
 
 function showOrderModal(order) {
-    document.getElementById('order-number').textContent = order.order_id;
+    document.getElementById('order-id').textContent = order.order_id || '0000';
     
-    const detailsDiv = document.querySelector('.order-details');
+    const detailsDiv = document.getElementById('modal-details');
     const config = {
         prices: { small: 10, large: 15 }
     };
     
+    // 将口味和小料转换为中文显示
+    const chineseFlavors = order.flavors.map(f => translateToChinese(f));
+    const chineseToppings = order.toppings.map(t => translateToChinese(t));
+    
     detailsDiv.innerHTML = `
-        <p><strong>分量:</strong> ${order.portion === 'small' ? '小份(6个)' : '大份(10个)'}</p>
-        <p><strong>口味:</strong> ${order.flavors.length > 0 ? order.flavors.join(', ') : '无'}</p>
-        <p><strong>小料:</strong> ${order.toppings.length > 0 ? order.toppings.join(', ') : '无'}</p>
-        <p><strong>总价:</strong> ¥${config.prices[order.portion]}</p>
-        <p><strong>下单时间:</strong> ${new Date(order.timestamp).toLocaleString()}</p>
-        <p><strong>状态:</strong> 待制作</p>
+        <div class="detail-item">
+            <span>分量:</span>
+            <span>${order.portion === 'small' ? '小份(6个)' : '大份(10个)'}</span>
+        </div>
+        <div class="detail-item">
+            <span>口味:</span>
+            <span>${chineseFlavors.length > 0 ? chineseFlavors.join(', ') : '无'}</span>
+        </div>
+        <div class="detail-item">
+            <span>小料:</span>
+            <span>${chineseToppings.length > 0 ? chineseToppings.join(', ') : '无'}</span>
+        </div>
+        <div class="detail-item">
+            <span>总价:</span>
+            <span>${config.prices[order.portion]}元</span>
+        </div>
+        <div class="detail-item">
+            <span>下单时间:</span>
+            <span>${new Date(order.timestamp).toLocaleString()}</span>
+        </div>
+        <div class="detail-item total">
+            <span>状态:</span>
+            <span>待制作</span>
+        </div>
     `;
     
     document.getElementById('order-modal').style.display = 'flex';
@@ -150,12 +214,8 @@ function resetSelection() {
     selectedFlavors = [];
     selectedToppings = [];
     
-    document.querySelectorAll('.portion-option').forEach(o => {
+    document.querySelectorAll('.option').forEach(o => {
         o.classList.remove('selected');
-    });
-    
-    document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
-        checkbox.checked = false;
     });
     
     updateOrderSummary();
@@ -172,18 +232,8 @@ async function saveOrderScreenshot() {
     });
 }
 
-function showOrderQuery() {
-    document.getElementById('query-modal').style.display = 'flex';
-}
-
-function closeQueryModal() {
-    document.getElementById('query-modal').style.display = 'none';
-    document.getElementById('query-order-number').value = '';
-    document.getElementById('query-result').innerHTML = '';
-}
-
-async function queryOrder() {
-    const orderNumber = document.getElementById('query-order-number').value.trim();
+async function checkOrderStatus() {
+    const orderNumber = document.getElementById('order-number-input').value.trim();
     
     if (!orderNumber || orderNumber.length !== 4) {
         alert('请输入有效的4位订单号');
@@ -194,7 +244,8 @@ async function queryOrder() {
         const response = await fetch(`api/get_order_by_id.php?order_id=${orderNumber}`);
         const result = await response.json();
         
-        const resultDiv = document.getElementById('query-result');
+        const statusDisplay = document.getElementById('order-status-display');
+        const statusContent = document.getElementById('order-status-content');
         
         if (result.success) {
             const order = result.order;
@@ -217,22 +268,28 @@ async function queryOrder() {
                     statusText = '未知';
             }
             
-            resultDiv.innerHTML = `
-                <div class="order-details">
-                    <p><strong>订单号:</strong> ${order.order_id}</p>
-                    <p><strong>分量:</strong> ${order.portion === 'small' ? '小份(6个)' : '大份(10个)'}</p>
-                    <p><strong>口味:</strong> ${order.flavors.length > 0 ? order.flavors.join(', ') : '无'}</p>
-                    <p><strong>小料:</strong> ${order.toppings.length > 0 ? order.toppings.join(', ') : '无'}</p>
-                    <p><strong>总价:</strong> ¥${config.prices[order.portion]}</p>
-                    <p><strong>下单时间:</strong> ${new Date(order.timestamp).toLocaleString()}</p>
-                    <p><strong>状态:</strong> ${statusText}</p>
-                </div>
+            // 将口味和小料转换为中文显示
+            const chineseFlavors = order.flavors.map(f => translateToChinese(f));
+            const chineseToppings = order.toppings.map(t => translateToChinese(t));
+            
+            statusContent.innerHTML = `
+                <p><strong>订单号:</strong> ${order.order_id}</p>
+                <p><strong>分量:</strong> ${order.portion === 'small' ? '小份(6个)' : '大份(10个)'}</p>
+                <p><strong>口味:</strong> ${chineseFlavors.length > 0 ? chineseFlavors.join(', ') : '无'}</p>
+                <p><strong>小料:</strong> ${chineseToppings.length > 0 ? chineseToppings.join(', ') : '无'}</p>
+                <p><strong>总价:</strong> ${config.prices[order.portion]}元</p>
+                <p><strong>下单时间:</strong> ${new Date(order.timestamp).toLocaleString()}</p>
+                <p><strong>状态:</strong> <span class="status-${order.status}">${statusText}</span></p>
             `;
+            statusDisplay.style.display = 'block';
         } else {
-            resultDiv.innerHTML = `<p class="error">${result.message}</p>`;
+            statusContent.innerHTML = `<p class="error">${result.message}</p>`;
+            statusDisplay.style.display = 'block';
         }
     } catch (error) {
         console.error('Error:', error);
-        document.getElementById('query-result').innerHTML = '<p class="error">查询失败，请稍后重试</p>';
+        const statusContent = document.getElementById('order-status-content');
+        statusContent.innerHTML = '<p class="error">查询失败，请稍后重试</p>';
+        document.getElementById('order-status-display').style.display = 'block';
     }
 }
