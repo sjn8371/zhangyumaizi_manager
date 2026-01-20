@@ -132,7 +132,7 @@ $_SESSION['last_activity'] = time();
             color: #ff9800;
         }
         
-        /* 右侧按钮区域 - 20%宽度，上下排列 */
+        /* 右侧按钮区域 - 水平排列 */
         .shop-controls {
             display: flex;
             flex-direction: row;
@@ -140,23 +140,26 @@ $_SESSION['last_activity'] = time();
             flex: 1;
             min-width: 150px;
             max-width: 180px;
+            align-items: center;
         }
         
         .shop-btn {
-            padding: 14px 20px;
+            padding: 12px 16px;
             border: none;
             border-radius: 10px;
             cursor: pointer;
             font-weight: 600;
             transition: all 0.3s;
-            font-size: 1rem;
+            font-size: 0.9rem;
             white-space: nowrap;
             text-align: center;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
+            gap: 8px;
             letter-spacing: 0.5px;
+            flex: 1;
+            min-width: 0;
         }
         
         .qr-btn {
