@@ -51,7 +51,7 @@ $_SESSION['last_activity'] = time();
             padding: 15px;
         }
         
-        /* 顶部统计栏 - 80%左 20%右布局 */
+        /* 顶部统计栏 - 修改为两行布局 */
         .header-stats {
             background: white;
             border-radius: 12px;
@@ -59,30 +59,38 @@ $_SESSION['last_activity'] = time();
             margin-bottom: 15px;
             box-shadow: 0 3px 15px rgba(0,0,0,0.08);
             display: flex;
-            justify-content: space-between;
-            align-items: stretch;
-            gap: 30px;
+            flex-direction: column;
+            gap: 15px;
         }
         
-        /* 左侧统计数据 - 80%宽度 */
-        .stats-left {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
+        /* 第一行：统计数据 */
+        .stats-row {
+            display: flex;
+            justify-content: space-between;
             gap: 20px;
-            flex: 4;
+            flex-wrap: nowrap;
+        }
+        
+        .stats-left {
+            display: flex;
+            gap: 20px;
+            flex: 1;
             min-width: 0;
+            overflow-x: auto;
+            padding-bottom: 5px;
         }
         
         .stat-item {
             text-align: center;
-            padding: 12px 15px;
+            padding: 15px 20px;
             background: linear-gradient(135deg, #f8f9fa, #e9ecef);
             border-radius: 10px;
             transition: all 0.3s;
-            min-width: 140px;
+            min-width: 180px;
             display: flex;
             flex-direction: column;
             justify-content: center;
+            flex-shrink: 0;
         }
         
         .stat-item:hover {
@@ -93,7 +101,7 @@ $_SESSION['last_activity'] = time();
         
         .stat-label {
             display: block;
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             color: #666;
             margin-bottom: 8px;
             font-weight: 500;
@@ -102,7 +110,7 @@ $_SESSION['last_activity'] = time();
         
         .stat-value {
             display: block;
-            font-size: 1.3rem;
+            font-size: 1.5rem;
             font-weight: bold;
             line-height: 1.2;
         }
@@ -115,8 +123,8 @@ $_SESSION['last_activity'] = time();
             border-radius: 6px;
             background: #e3f2fd;
             display: inline-block;
-            min-width: 70px;
-            font-size: 1.1rem;
+            min-width: 80px;
+            font-size: 1.2rem;
         }
         
         #refresh-time:hover {
@@ -132,34 +140,36 @@ $_SESSION['last_activity'] = time();
             color: #ff9800;
         }
         
-        /* 右侧按钮区域 - 水平排列 */
+        /* 第二行：操作按钮 */
+        .controls-row {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            padding-top: 10px;
+            border-top: 1px solid #eee;
+        }
+        
         .shop-controls {
             display: flex;
-            flex-direction: row;
-            gap: 12px;
-            flex: 1;
-            min-width: 150px;
-            max-width: 180px;
-            align-items: center;
+            gap: 15px;
         }
         
         .shop-btn {
-            padding: 12px 16px;
+            padding: 14px 25px;
             border: none;
             border-radius: 10px;
             cursor: pointer;
             font-weight: 600;
             transition: all 0.3s;
-            font-size: 0.9rem;
+            font-size: 1rem;
             white-space: nowrap;
             text-align: center;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 10px;
             letter-spacing: 0.5px;
-            flex: 1;
-            min-width: 0;
+            min-width: 160px;
         }
         
         .qr-btn {
@@ -184,15 +194,16 @@ $_SESSION['last_activity'] = time();
             box-shadow: 0 8px 25px rgba(255, 94, 98, 0.4);
         }
         
-        /* Tab切换 - 横向flex平均分布 */
+        /* Tab切换 - 横向flex平均分布，确保不换行 */
         .tabs-container {
             background: white;
             border-radius: 12px;
             margin-bottom: 15px;
             display: flex;
-            flex-wrap: nowrap;
+            flex-wrap: nowrap; /* 确保不换行 */
             box-shadow: 0 2px 10px rgba(0,0,0,0.08);
             overflow: hidden;
+            justify-content: space-between; /* 确保tab在一行内均匀对齐 */
         }
         
         .tab {
@@ -235,7 +246,7 @@ $_SESSION['last_activity'] = time();
         
         /* 订单内容区域 */
         .content-area {
-            height: calc(100vh - 230px);
+            height: calc(100vh - 280px);
             overflow-y: auto;
             padding-right: 5px;
         }
@@ -429,7 +440,7 @@ $_SESSION['last_activity'] = time();
         }
         
         .serve-btn {
-background: linear-gradient(135deg, #4CAF50, #45a049);
+            background: linear-gradient(135deg, #4CAF50, #45a049);
             color: white;
         }
         
@@ -465,7 +476,7 @@ background: linear-gradient(135deg, #4CAF50, #45a049);
         
         .modal-content {
             background-color: white;
-border-radius: 15px;
+            border-radius: 15px;
             width: 100%;
             max-width: 450px;
             animation: modalSlideIn 0.3s ease;
@@ -681,7 +692,7 @@ border-radius: 15px;
             border: 2px solid #e0e0e0;
             border-radius: 8px;
             font-size: 0.95rem;
-min-width: 140px;
+            min-width: 140px;
             background: white;
         }
         
@@ -716,49 +727,24 @@ min-width: 140px;
         
         /* 响应式调整 */
         @media (max-width: 992px) {
-            .header-stats {
-                flex-direction: row;
-                gap: 15px;
-                overflow-x: auto;
-                padding: 12px 15px;
-            }
-            
-            .stats-left {
-                flex-wrap: nowrap;
-                gap: 15px;
-            }
-            
-            .stat-item {
-                min-width: 100px;
-                padding: 8px 12px;
-            }
-            
-            .shop-controls {
-                flex-shrink: 0;
-            }
-            
-            .shop-btn {
-                min-width: 90px;
-                padding: 8px 12px;
-                font-size: 0.85rem;
-            }
-        }
-        
-        @media (max-width: 768px) {
-            .header-stats {
+            .stats-row {
                 flex-direction: column;
                 gap: 15px;
             }
             
             .stats-left {
-                width: 100%;
                 justify-content: space-between;
-                flex-wrap: wrap;
+                gap: 15px;
             }
             
             .stat-item {
                 flex: 1;
-                min-width: 100px;
+                min-width: 150px;
+                padding: 12px 15px;
+            }
+            
+            .controls-row {
+                justify-content: center;
             }
             
             .shop-controls {
@@ -767,7 +753,11 @@ min-width: 140px;
             }
         }
         
-        @media (max-width: 576px) {
+        @media (max-width: 768px) {
+            .header-stats {
+                padding: 12px;
+            }
+            
             .stats-left {
                 flex-direction: column;
                 gap: 10px;
@@ -775,70 +765,77 @@ min-width: 140px;
             
             .stat-item {
                 width: 100%;
+                min-width: 0;
+            }
+            
+            .controls-row {
+                padding-top: 15px;
             }
             
             .shop-controls {
                 flex-direction: column;
                 width: 100%;
+                gap: 10px;
             }
             
             .shop-btn {
                 width: 100%;
+                min-width: 0;
             }
         }
         
-            .tabs-container {
-                flex-direction: column;
+        @media (max-width: 576px) {
+            .stat-item {
+                padding: 15px 12px;
             }
             
-            .tab {
-                border-right: none;
-                border-bottom: 1px solid #e0e0e0;
+            .stat-value {
+                font-size: 1.3rem;
             }
             
-            .tab.active::after {
-                top: 0;
-                bottom: auto;
-                height: 3px;
-            }
-            
-            .detail-value .flavors,
-            .detail-value .toppings {
-                justify-content: flex-start;
+            .shop-btn {
+                padding: 12px 15px;
+                min-width: 0;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- 顶部统计栏 -->
+        <!-- 顶部统计栏 - 修改为两行布局 -->
         <div class="header-stats">
-            <div class="stats-left">
-                <div class="stat-item">
-                    <span class="stat-label">刷新时间</span>
-                    <span class="stat-value" id="refresh-time">0s前</span>
-                </div>
-                
-                <div class="stat-item">
-                    <span class="stat-label">今日营业额</span>
-                    <span class="stat-value" id="total-revenue">0元</span>
-                </div>
-                
-                <div class="stat-item">
-                    <span class="stat-label">待处理/总单量</span>
-                    <span class="stat-value" id="pending-total-orders">0/0</span>
+            <!-- 第一行：统计数据 -->
+            <div class="stats-row">
+                <div class="stats-left">
+                    <div class="stat-item">
+                        <span class="stat-label">刷新时间</span>
+                        <span class="stat-value" id="refresh-time">0s前</span>
+                    </div>
+                    
+                    <div class="stat-item">
+                        <span class="stat-label">今日营业额</span>
+                        <span class="stat-value" id="total-revenue">0元</span>
+                    </div>
+                    
+                    <div class="stat-item">
+                        <span class="stat-label">待处理/总单量</span>
+                        <span class="stat-value" id="pending-total-orders">0/0</span>
+                    </div>
                 </div>
             </div>
             
-            <div class="shop-controls">
-                <button class="shop-btn qr-btn" id="view-qr">
-                    <span class="btn-icon">👁️</span>
-                    <span>查看二维码</span>
-                </button>
-                <button class="shop-btn close-btn" id="close-shop">
-                    <span class="btn-icon">🔒</span>
-                    <span>闭店</span>
-                </button>
+            <!-- 第二行：操作按钮 -->
+            <div class="controls-row">
+                <div class="shop-controls">
+                    <button class="shop-btn qr-btn" id="view-qr">
+                        <span class="btn-icon">👁️</span>
+                        <span>查看二维码</span>
+                    </button>
+                    <button class="shop-btn close-btn" id="close-shop">
+                        <span class="btn-icon">🔒</span>
+                        <span>闭店</span>
+                    </button>
+                </div>
             </div>
         </div>
         
